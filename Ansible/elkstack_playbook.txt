@@ -1,0 +1,47 @@
+---
+  - name: Elk playbook
+    hosts: elk
+    become: true
+    #remote_user: sysadmin
+    tasks:
+
+    - name: install docker.io
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        name: docker.io
+        state: present
+
+    - name: install pip3
+      apt:
+        force_apt_get: yes
+        name: python3-pip
+        state: present
+
+    - name: install docker python module
+      pip:
+        name: docker
+        state: present
+
+    - name: download and launch dvwa
+      docker_container:
+        name: Elk
+        image: sebp/elk:761
+        restart_policy: always
+        state: started
+        published_ports:
+          - 5601:5601
+          - 9200:9200
+          - 5044:5044
+
+    - name: start docker services
+      systemd:
+        name: docker
+        enabled: yes
+
+    - name: use more memory
+      sysctl:
+        name: vm.max_map_count
+        value: 262144
+        state: present
+        reload: yes

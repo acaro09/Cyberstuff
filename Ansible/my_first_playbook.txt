@@ -1,0 +1,22 @@
+---
+  - name: my first playbook
+    hosts: webservers
+    become: true
+    tasks:
+
+    #- name: install apache_d
+    # apt:
+    #   name: apache2
+    #   state: present
+
+    - name: install docker.io
+      apt:
+        update_cache: yes
+        name: docker.io
+        state: present
+
+    - name: install pip3
+      apt:
+        force_apt_get: yes
+        name: python3-pip
+        state: present
